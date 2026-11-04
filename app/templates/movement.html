@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Движение молока{% endblock %}{% block content %}
+<a class="back" href="/">← Главная</a><p class="eyebrow">ПРИХОД И РАСХОД</p><h1>Движение молока</h1><p class="muted">Фиксируйте расход, чтобы автоматически считать остатки и формировать СП-23.</p>
+<form method="post" class="panel form">
+<label>Дата операции<input required type="date" name="date_movement" value="{{ today }}"></label>
+<label>Тип операции<select name="movement_type" id="movement_type"><option>Расход</option><option>Приход</option></select></label>
+<label>Направление расхода<select name="direction"><option value="">— Выберите направление —</option><option>Отгрузка на завод</option><option>Выпойка телят</option><option>Столовая</option></select></label>
+<label>Объём, литров<input required type="number" name="volume_liters" min="0.01" step="0.01" placeholder="Например, 80.00"></label>
+<label>Комментарий<input name="comment" maxlength="500" placeholder="Например, номер накладной"></label>
+<label>Кто внёс запись<select name="user_id"><option value="">— Не указан —</option>{% for u in refs.users %}<option value="{{ u.user_id }}">{{ u.full_name }} · {{ u.role }}</option>{% endfor %}</select></label>
+<button class="wide">Сохранить движение</button></form>
+<div class="note">В текущей структуре базы направление «Переработка» отсутствует в ENUM. Его можно добавить отдельным изменением схемы, если это направление нужно учитывать.</div>{% endblock %}

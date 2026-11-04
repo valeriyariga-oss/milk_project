@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1e5d45"><title>{% block title %}Молоко.Учёт{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body><header class="top"><a class="brand" href="/">🥛 Молоко.Учёт</a><span class="sub">Учёт фермы</span></header>
+<nav class="nav"><a href="/">Главная</a><a href="/yield">Надой</a><a href="/movement">Движение</a><a href="/journal">Журнал</a><a href="/reports">Документы</a></nav>
+<main class="wrap">
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+{% block content %}{% endblock %}
+</main><footer>Молоко.Учёт · MVP для первичного учёта на ферме</footer></body></html>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Ввод надоя{% endblock %}{% block content %}
+<a class="back" href="/">← Главная</a><p class="eyebrow">ПЕРВИЧНЫЕ ДАННЫЕ</p><h1>Внести надой</h1><p class="muted">Запись сохранится в таблице milk_yield.</p>
+<form method="post" class="panel form">
+<label>Дата надоя<input required type="date" name="date_yield" value="{{ today }}"></label>
+<label>Смена<select name="shift" required><option>Утро</option><option>День</option><option>Вечер</option></select></label>
+<label>Корова (если учёт индивидуальный)<select name="animal_id"><option value="">— Не выбрана —</option>{% for a in refs.animals %}<option value="{{ a.animal_id }}">{{ a.label }}</option>{% endfor %}</select></label>
+<label>Группа (если учёт групповой)<select name="group_id"><option value="">— Не выбрана —</option>{% for g in refs.groups %}<option value="{{ g.group_id }}">{{ g.name }}</option>{% endfor %}</select></label>
+<label>Объём, литров<input required type="number" name="volume_liters" min="0.01" step="0.01" placeholder="Например, 12.50"></label>
+<label>Кто внёс запись<select name="user_id"><option value="">— Не указан —</option>{% for u in refs.users %}<option value="{{ u.user_id }}">{{ u.full_name }} · {{ u.role }}</option>{% endfor %}</select></label>
+<p class="hint">Выбери либо корову, либо группу — не оба значения одновременно.</p><button class="wide">Сохранить надой</button></form>{% endblock %}

@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Настройки{% endblock %}
+{% block content %}
+<div class="wrap">
+    <h1>Настройки</h1>
+    <p class="muted">Управляйте данными организации, сотрудниками и животными</p>
+    
+    <!-- Основные настройки -->
+    <div class="panel" style="margin-bottom: 24px;">
+        <h2>Основные настройки организации</h2>
+        <form method="POST" class="form">
+            <label>
+                Название организации
+                <input type="text" name="org_name" value="{{ settings.org_name }}" required>
+            </label>
+            
+            <label>
+                Отделение (участок)
+                <input type="text" name="department" value="{{ settings.department }}">
+            </label>
+            
+            <label>
+                Ферма
+                <input type="text" name="farm" value="{{ settings.farm }}">
+            </label>
+            
+            <label>
+                Бригада
+                <input type="text" name="brigade" value="{{ settings.brigade }}">
+            </label>
+            
+            <label>
+                Материально ответственное лицо (ФИО)
+                <input type="text" name="responsible_person" value="{{ settings.responsible_person }}">
+            </label>
+            
+            <label>
+                Цена за 1 кг молока (руб.)
+                <input type="number" step="0.01" name="milk_price" value="{{ settings.milk_price }}" required>
+            </label>
+            
+            <label>
+                Дебет счета
+                <input type="text" name="debit_account" value="{{ settings.debit_account }}">
+                <span class="hint">Спросите у бухгалтера, какой счет использовать для оприходования молока</span>
+            </label>
+            
+            <label>
+                Кредит счета
+                <input type="text" name="credit_account" value="{{ settings.credit_account }}">
+                <span class="hint">Спросите у бухгалтера, какой счет использовать как источник</span>
+            </label>
+            
+            <button type="submit">Сохранить настройки</button>
+        </form>
+    </div>
+    
+    <!-- Сотрудники -->
+    <div class="panel" style="margin-bottom: 24px;">
+        <h2>Сотрудники</h2>
+        
+        <form method="POST" action="/settings/users/add" class="form" style="margin-bottom: 20px;">
+            <label>
+                ФИО
+                <input type="text" name="full_name" required>
+            </label>
+            <label>
+                Роль
+                <select name="role" required>
+                    <option value="Доярка">Доярка</option>
+                    <option value="Лаборант">Лаборант</option>
+                    <option value="Бригадир">Бригадир</option>
+                </select>
+            </label>
+            <button type="submit">Добавить сотрудника</button>
+        </form>
+        
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Роль</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in refs.users %}
+                    <tr>
+                        <td>{{ u.full_name }}</td>
+                        <td>{{ u.role }}</td>
+                        <td>
+                            <form method="POST" action="/settings/users/delete/{{ u.user_id }}" style="display: inline;">
+                                <button type="submit" style="background: #a13222; padding: 6px 12px; font-size: 12px;" 
+                                        onclick="return confirm('Удалить сотрудника?')">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Группы -->
+    <div class="panel" style="margin-bottom: 24px;">
+        <h2>Группы животных</h2>
+        
+        <form method="POST" action="/settings/groups/add" class="form" style="margin-bottom: 20px;">
+            <label>
+                Название группы
+                <input type="text" name="name" required>
+            </label>
+            <button type="submit">Добавить группу</button>
+        </form>
+        
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for g in refs.groups %}
+                    <tr>
+                        <td>{{ g.name }}</td>
+                        <td>
+                            <form method="POST" action="/settings/groups/delete/{{ g.group_id }}" style="display: inline;">
+                                <button type="submit" style="background: #a13222; padding: 6px 12px; font-size: 12px;"
+                                        onclick="return confirm('Удалить группу?')">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Животные -->
+    <div class="panel">
+        <h2>Животные</h2>
+        
+        <form method="POST" action="/settings/animals/add" class="form" style="margin-bottom: 20px;">
+            <label>
+                Номер (бирка)
+                <input type="text" name="tag_number">
+            </label>
+            <label>
+                Кличка
+                <input type="text" name="nickname">
+            </label>
+            <label>
+                Группа
+                <select name="group_id">
+                    <option value="">— Без группы —</option>
+                    {% for g in refs.groups %}
+                    <option value="{{ g.group_id }}">{{ g.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Статус
+                <select name="status">
+                    <option value="Дойная">Дойная</option>
+                    <option value="Сухостой">Сухостой</option>
+                    <option value="На лечении">На лечении</option>
+                </select>
+            </label>
+            <label>
+                Дата рождения
+                <input type="date" name="date_of_birth">
+            </label>
+            <button type="submit">Добавить животное</button>
+        </form>
+        
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Номер</th>
+                        <th>Кличка</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in refs.animals %}
+                    <tr>
+                        <td>{{ a.tag_number or '—' }}</td>
+                        <td>{{ a.nickname or '—' }}</td>
+                        <td>{{ a.status }}</td>
+                        <td>
+                            <form method="POST" action="/settings/animals/delete/{{ a.animal_id }}" style="display: inline;">
+                                <button type="submit" style="background: #a13222; padding: 6px 12px; font-size: 12px;"
+                                        onclick="return confirm('Удалить животное?')">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -6,16 +6,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def db():
-    """Создание подключения к БД"""
-    return psycopg2.connect(
+    conn = psycopg2.connect(
         host=os.getenv("PGHOST", "localhost"),
         port=os.getenv("PGPORT", "5432"),
         dbname=os.getenv("PGDATABASE", "postgres"),
         user=os.getenv("PGUSER", "postgres"),
         password=os.getenv("PGPASSWORD", ""),
-        options="-c search_path=" + os.getenv("PGSCHEMA", "public"),
-        sslmode = os.getenv("PGSSLMODE", "prefer")
+        sslmode=os.getenv("PGSSLMODE", "require")
     )
+    # Устанавливаем схему после подключения
+    with conn.cursor() as cur:
+        cur.execute(f"SET search_path TO {os.getenv('PGSCHEMA', 'public')}")
+    return conn
 
 def rows(sql, params=()):
     """Выполнить SELECT и вернуть список словарей"""

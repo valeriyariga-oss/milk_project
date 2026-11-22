@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Главная — Молоко.Учёт{% endblock %}{% block content %}
+<div class="heading"><div><p class="eyebrow">ПАНЕЛЬ ФЕРМЫ</p><h1>Добрый день!</h1><p class="muted">Сводка движения молока на выбранную дату.</p></div>
+<form class="datepick"><label>Дата<input type="date" name="day" value="{{ day }}"></label><button>Показать</button></form></div>
+<div class="cards"><article class="metric"><span>Надоено за день</span><strong>{{ "%.2f"|format(summary.yielded|float) }} <small>л</small></strong><em>Все смены</em></article>
+<article class="metric"><span>Расход за день</span><strong>{{ "%.2f"|format(summary.spent|float) }} <small>л</small></strong><em>Все направления</em></article>
+<article class="metric"><span>Расчётный остаток</span><strong>{{ "%.2f"|format(summary.balance|float) }} <small>л</small></strong><em>Накопительно с начала учёта</em></article></div>
+<div class="actions"><a class="action primary" href="/yield">＋ Внести надой</a><a class="action" href="/movement">↗ Учесть расход</a><a class="action" href="/reports">⇩ Сформировать документы</a></div>
+<section class="panel"><div class="section-head"><h2>Надои за {{ day }}</h2><a href="/journal">Весь журнал →</a></div>
+{% if recent %}<div class="table-wrap"><table><thead><tr><th>Смена</th><th>Корова / группа</th><th>Объём</th><th>Сотрудник</th></tr></thead><tbody>{% for r in recent %}<tr><td>{{ r.shift }}</td><td>{{ r.subject }}</td><td>{{ "%.2f"|format(r.volume_liters|float) }} л</td><td>{{ r.full_name or "—" }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty">Записей за эту дату пока нет. Добавьте первый надой.</div>{% endif %}</section>
+{% endblock %}
